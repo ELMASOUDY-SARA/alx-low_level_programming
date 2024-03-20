@@ -1,61 +1,57 @@
 #include "hash_tables.h"
 
 /**
- *  * hash_table_set - Write a function that adds an element to the hash table.
- *   *
- *    * @ht: Pointer to hash_table_t
- *     * @key: Is the key
- *      * @value: and value is the value associated with the key
- *       *
- *        * Return: 1 if it succeeded, 0 otherwise
- *         */
+ * hash_table_set - short description
+ *
+ * Description: long description
+ *
+ * @ht: hash table
+ * @key: key
+ * @value: value
+ *
+ * Return: return description
+ */
 
 int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
-		unsigned long int index = 0;
-			int returAdd = 0;
+	unsigned long int index = 0;
+	hash_node_t *new_node = NULL, *old_head = NULL;
 
-				if (key == NULL || ht == NULL)
-							return (0);
-					index = key_index((unsigned char *)key, ht->size);
-						returAdd = add_node(&(ht)->array[index], (char *)key, (char *)value);
-							if (returAdd == 1)
-										return (1);
-								return (0);
-}
-
-/**
- *  * add_node - function that adds a new node at the beginning of hash_node_t
- *   *
- *    * @head: Pointer to head of the hash_node_t
- *     * @key: Is the key
- *      * @value: and value is the value associated with the key
- *       *
- *        * Return: 1 if it succeeded, 0 otherwise
- *         */
-
-int add_node(hash_node_t **head, char *key, char *value)
-{
-		hash_node_t *new_node = (hash_node_t *) malloc(sizeof(hash_node_t));
-			hash_node_t *aux = (*head);
-
-				if (new_node == NULL)
-							return (0);
-
-					while (aux != NULL)
-							{
-										if (strcmp(aux->key, key) == 0)
-													{
-																	free(aux->value);
-																				aux->value = strdup(value);
-																							free(new_node);
-																										return (1);
-																												}
-												aux = aux->next;
-													}
-						new_node->key = strdup(key);
-							new_node->value = strdup(value);
-								new_node->next = (*head);
-									(*head) = new_node;
-										return (1);
+	if (key == NULL || value == NULL || ht == NULL)
+		return (0);
+	if (strlen(key) == 0)
+		return (0);
+	new_node = (hash_node_t *) malloc(sizeof(hash_node_t));
+	if (new_node == NULL)
+		return (0);
+	index = key_index((const unsigned char *) key, ht->size);
+	new_node->key = (char *) strdup(key);
+	new_node->value = (char *) strdup(value);
+	new_node->next = NULL;
+	if ((ht->array)[index] == NULL)
+	{
+		(ht->array)[index] = new_node;
+		return (1);
+	}
+	else
+	{
+		old_head = (ht->array)[index];
+		while (old_head)
+		{
+			if (strcmp(old_head->key, key) == 0)
+			{
+				free(old_head->value);
+				old_head->value = (char *) strdup(value);
+				free(new_node->key);
+				free(new_node->value);
+				free(new_node);
+				return (1);
+			}
+			old_head = old_head->next;
+		}
+		old_head = (ht->array)[index];
+		new_node->next = old_head;
+		(ht->array)[index] = new_node;
+		return (1);
+	}
 }
